@@ -66,8 +66,8 @@ public:
 
     void doCollisionsExist();
     bool checkCollision(GameObject& one, GameObject& two) const; // axis-aligned bounding box
-    bool checkCollision(BallObject& one, GameObject& two) const; // axis-aligned bounding box on circlular object
-    Collision checkCollisionResolution(BallObject& one, GameObject& two); 
+    //bool checkCollision(BallObject& one, GameObject& two) const; // axis-aligned bounding box on circlular object
+    Collision checkCollision(BallObject& one, GameObject& two); 
     Direction vectorDirection(glm::vec2 target);
 
     void spawnPowerUps(GameObject& block);

@@ -118,7 +118,7 @@ void Game::update(float dt)
     ball->move(dt, this->width);
     this->doCollisionsExist();
     particles->update(dt, *ball, NEW_PARTICLES_PER_FRAME, glm::vec2(ball->radius / 2.0f));
-
+    this->updatePowerUps(dt);
     if (shaketime > 0.f)
     {
         shaketime -= dt;
@@ -127,8 +127,8 @@ void Game::update(float dt)
 
     if (ball->position.y >= this->height)
     {
-        resetPlayer();
-        resetLevel();
+        this->resetPlayer();
+        this->resetLevel();
     }
 }
 
@@ -137,17 +137,19 @@ void Game::render()
     if (this->state == GameState::GAME_ACTIVE)
     {        
         effects->beginRender();
+
         renderer->drawSprite(ResourceManager::getTexture("background"),
             glm::vec2(0.0f, 0.0f), glm::vec2(this->width, this->height), 0.0f
         );
         this->levels[this->level].draw(*renderer);
-        player->draw(*renderer);
-        particles->draw();
-        ball->draw(*renderer);
+        player->draw(*renderer);        
         for (PowerUp& powerUp : this->powerUps)
         {
             if (!powerUp.destroyed) { powerUp.draw(*renderer); }                
         }
+        particles->draw();
+        ball->draw(*renderer);
+
         effects->endRender();
         effects->render(glfwGetTime());
     }
@@ -155,9 +157,17 @@ void Game::render()
 
 void Game::resetPlayer()
 {
-    ball->stuck = true;
+    player->size = PLAYER_SIZE;
     player->position = startPlayerPos;
+    ball->stuck = true;
     ball->position = startBallPos;
+    
+    effects->chaos = false;
+    effects->confuse = false;
+    ball->passthrough = false;
+    ball->sticky = false;
+    player->color = glm::vec3(1.0f);
+    ball->color = glm::vec3(1.0f);
 }
 
 void Game::resetLevel()
@@ -175,11 +185,11 @@ void Game::doCollisionsExist()
     {
         if (!box.destroyed)
         {
-            Collision collision = checkCollisionResolution(*ball, box);
+            Collision collision = checkCollision(*ball, box);
             if (collision.isCollision) // if collision is true
             {
                 // destroy block if not solid
-                if (!(ball->passthrough && !box.isSolid)) 
+                if (!box.isSolid) 
                 { 
                     box.destroyed = true; 
                     this->spawnPowerUps(box);
@@ -193,23 +203,26 @@ void Game::doCollisionsExist()
                 // collision resolution
                 Direction dir = collision.direction;
                 glm::vec2 diff_vector = collision.diffVec;
-                if (dir == Direction::LEFT || dir == Direction::RIGHT) // horizontal collision
+                if (!(ball->passthrough && !box.isSolid)) 
                 {
-                    ball->velocity.x = -ball->velocity.x; // reverse horizontal velocity
-                    // relocate
-                    float penetration = ball->radius - std::abs(diff_vector.x);
-                    if (dir == Direction::LEFT) { ball->position.x += penetration; } // move ball to right
-                    else { ball->position.x -= penetration; } // move ball to left;
+                    if (dir == Direction::LEFT || dir == Direction::RIGHT) // horizontal collision
+                    {
+                        ball->velocity.x = -ball->velocity.x; // reverse horizontal velocity
+                        // relocate
+                        float penetration = ball->radius - std::abs(diff_vector.x);
+                        if (dir == Direction::LEFT) { ball->position.x += penetration; } // move ball to right
+                        else { ball->position.x -= penetration; } // move ball to left;
 
-                }
-                else // vertical collision
-                {
-                    ball->velocity.y = -ball->velocity.y; // reverse vertical velocity
-                    // relocate
-                    float penetration = ball->radius - std::abs(diff_vector.y);
-                    if (dir == Direction::UP) { ball->position.y -= penetration; } // move ball back up
-                    else { ball->position.y += penetration; } // move ball back down
+                    }
+                    else // vertical collision
+                    {
+                        ball->velocity.y = -ball->velocity.y; // reverse vertical velocity
+                        // relocate
+                        float penetration = ball->radius - std::abs(diff_vector.y);
+                        if (dir == Direction::UP) { ball->position.y -= penetration; } // move ball back up
+                        else { ball->position.y += penetration; } // move ball back down
 
+                    }
                 }
             }
         }
@@ -229,7 +242,8 @@ void Game::doCollisionsExist()
             }
         }
     }
-    Collision result = checkCollisionResolution(*ball, *player);
+
+    Collision result = checkCollision(*ball, *player);
     if (!ball->stuck && result.isCollision)
     {
         // check where it hit the board, and change velocity based on where it hit the board
@@ -258,27 +272,27 @@ bool Game::checkCollision(GameObject& one, GameObject& two) const // AABB - AABB
     return collisionX && collisionY;
 }
 
-bool Game::checkCollision(BallObject& one, GameObject& two) const
-{
-    // get center point circle first 
-    glm::vec2 center(one.position + one.radius);
-    // calculate AABB info (center, half-extents)
-    glm::vec2 aabb_half_extents(two.size.x / 2.0f, two.size.y / 2.0f);
-    glm::vec2 aabb_center(
-        two.position.x + aabb_half_extents.x,
-        two.position.y + aabb_half_extents.y
-    );
-    // get difference vector between both centers
-    glm::vec2 difference = center - aabb_center;
-    glm::vec2 clamped = glm::clamp(difference, -aabb_half_extents, aabb_half_extents);
-    // add clamped value to AABB_center and we get the value of box closest to circle
-    glm::vec2 closest = aabb_center + clamped;
-    // retrieve vector between center circle and closest point AABB and check if length <= radius
-    difference = closest - center;
-    return glm::length(difference) < one.radius;
-}
+//bool Game::checkCollision(BallObject& one, GameObject& two) const
+//{
+//    // get center point circle first 
+//    glm::vec2 center(one.position + one.radius);
+//    // calculate AABB info (center, half-extents)
+//    glm::vec2 aabb_half_extents(two.size.x / 2.0f, two.size.y / 2.0f);
+//    glm::vec2 aabb_center(
+//        two.position.x + aabb_half_extents.x,
+//        two.position.y + aabb_half_extents.y
+//    );
+//    // get difference vector between both centers
+//    glm::vec2 difference = center - aabb_center;
+//    glm::vec2 clamped = glm::clamp(difference, -aabb_half_extents, aabb_half_extents);
+//    // add clamped value to AABB_center and we get the value of box closest to circle
+//    glm::vec2 closest = aabb_center + clamped;
+//    // retrieve vector between center circle and closest point AABB and check if length <= radius
+//    difference = closest - center;
+//    return glm::length(difference) < one.radius;
+//}
 
-Collision Game::checkCollisionResolution(BallObject& one, GameObject& two) 
+Collision Game::checkCollision(BallObject& one, GameObject& two) 
 {
     // get center point circle first 
     glm::vec2 center(one.position + one.radius);
@@ -335,37 +349,37 @@ void Game::spawnPowerUps(GameObject& block)
     if (ek::random_static::get<bool>(.75)) // 1 in 75 chance
     {
         this->powerUps.push_back(
-            PowerUp("speed", glm::vec3(0.5f, 0.5f, 1.0f), 0.0f, block.position, ResourceManager::getTexture("tex_speed")
+            PowerUp("speed", glm::vec3(0.5f, 0.5f, 1.0f), 0.0f, block.position, ResourceManager::getTexture("powerup_speed")
             ));
     }
     if (ek::random_static::get<bool>(.75))
     {
         this->powerUps.push_back(
-            PowerUp("sticky", glm::vec3(1.0f, 0.5f, 1.0f), 20.0f, block.position, ResourceManager::getTexture("tex_sticky")
+            PowerUp("sticky", glm::vec3(1.0f, 0.5f, 1.0f), 20.0f, block.position, ResourceManager::getTexture("powerup_sticky")
             ));
     }
     if (ek::random_static::get<bool>(.75))
     {
         this->powerUps.push_back(
-            PowerUp("pass-through", glm::vec3(0.5f, 1.0f, 0.5f), 10.0f, block.position, ResourceManager::getTexture("tex_pass")
+            PowerUp("pass-through", glm::vec3(0.5f, 1.0f, 0.5f), 10.0f, block.position, ResourceManager::getTexture("powerup_pass")
             ));
     }
     if (ek::random_static::get<bool>(.75))
     {
         this->powerUps.push_back(
-            PowerUp("pad-size-increase", glm::vec3(1.0f, 0.6f, 0.4), 0.0f, block.position, ResourceManager::getTexture("tex_size")
+            PowerUp("pad-size-increase", glm::vec3(1.0f, 0.6f, 0.4), 0.0f, block.position, ResourceManager::getTexture("powerup_size")
             ));
     }
     if (ek::random_static::get<bool>(.15)) // negative powerups should spawn more often
     {
         this->powerUps.push_back(
-            PowerUp("confuse", glm::vec3(1.0f, 0.3f, 0.3f), 15.0f, block.position, ResourceManager::getTexture("tex_confuse")
+            PowerUp("confuse", glm::vec3(1.0f, 0.3f, 0.3f), 15.0f, block.position, ResourceManager::getTexture("powerup_confuse")
             ));
     }
     if (ek::random_static::get<bool>(.15))
     {
         this->powerUps.push_back(
-            PowerUp("chaos", glm::vec3(0.9f, 0.25f, 0.25f), 15.0f, block.position, ResourceManager::getTexture("tex_chaos")
+            PowerUp("chaos", glm::vec3(0.9f, 0.25f, 0.25f), 15.0f, block.position, ResourceManager::getTexture("powerup_chaos")
             ));
     }
 }
