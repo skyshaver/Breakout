@@ -40,7 +40,7 @@ void Game::init()
     ResourceManager::loadTexture("textures/block_solid.png", false, "block_solid");
     ResourceManager::loadTexture("textures/paddle.png", true, "paddle");
     ResourceManager::loadTexture("textures/particle.png", true, "particle");
-    ResourceManager::loadTexture("textures/powerup_speed.png", true, "powerup_speed");
+    ResourceManager::loadTexture("textures/powerup_speed.png", true, "powerup_speed");  
     ResourceManager::loadTexture("textures/powerup_sticky.png", true, "powerup_sticky");
     ResourceManager::loadTexture("textures/powerup_increase.png", true, "powerup_increase");
     ResourceManager::loadTexture("textures/powerup_confuse.png", true, "powerup_confuse");
@@ -159,8 +159,10 @@ void Game::resetPlayer()
 {
     player->size = PLAYER_SIZE;
     player->position = startPlayerPos;
+
     ball->stuck = true;
     ball->position = startBallPos;
+    ball->velocity = INITIAL_BALL_VELOCITY;
     
     effects->chaos = false;
     effects->confuse = false;
@@ -346,37 +348,37 @@ Direction Game::vectorDirection(glm::vec2 target)
 
 void Game::spawnPowerUps(GameObject& block)
 {
-    if (ek::random_static::get<bool>(.75)) // 1 in 75 chance
+    if (ek::random_static::get<bool>(.013)) // 1 in 75 chance
     {
         this->powerUps.push_back(
             PowerUp("speed", glm::vec3(0.5f, 0.5f, 1.0f), 0.0f, block.position, ResourceManager::getTexture("powerup_speed")
             ));
     }
-    if (ek::random_static::get<bool>(.75))
+    if (ek::random_static::get<bool>(.013))
     {
         this->powerUps.push_back(
             PowerUp("sticky", glm::vec3(1.0f, 0.5f, 1.0f), 20.0f, block.position, ResourceManager::getTexture("powerup_sticky")
             ));
     }
-    if (ek::random_static::get<bool>(.75))
+    if (ek::random_static::get<bool>(.013))
     {
         this->powerUps.push_back(
-            PowerUp("pass-through", glm::vec3(0.5f, 1.0f, 0.5f), 10.0f, block.position, ResourceManager::getTexture("powerup_pass")
+            PowerUp("pass-through", glm::vec3(0.5f, 1.0f, 0.5f), 10.0f, block.position, ResourceManager::getTexture("powerup_passthrough")
             ));
     }
-    if (ek::random_static::get<bool>(.75))
+    if (ek::random_static::get<bool>(.013))
     {
         this->powerUps.push_back(
-            PowerUp("pad-size-increase", glm::vec3(1.0f, 0.6f, 0.4), 0.0f, block.position, ResourceManager::getTexture("powerup_size")
+            PowerUp("pad-size-increase", glm::vec3(1.0f, 0.6f, 0.4), 0.0f, block.position, ResourceManager::getTexture("powerup_increase")
             ));
     }
-    if (ek::random_static::get<bool>(.15)) // negative powerups should spawn more often
+    if (ek::random_static::get<bool>(.066)) // negative powerups should spawn more often
     {
         this->powerUps.push_back(
             PowerUp("confuse", glm::vec3(1.0f, 0.3f, 0.3f), 15.0f, block.position, ResourceManager::getTexture("powerup_confuse")
             ));
     }
-    if (ek::random_static::get<bool>(.15))
+    if (ek::random_static::get<bool>(.066))
     {
         this->powerUps.push_back(
             PowerUp("chaos", glm::vec3(0.9f, 0.25f, 0.25f), 15.0f, block.position, ResourceManager::getTexture("powerup_chaos")
@@ -419,6 +421,7 @@ void Game::updatePowerUps(float dt)
                     if (!isOtherPowerUpActive(this->powerUps, "confuse"))
                     {	// only reset if no other PowerUp of type confuse is active
                         effects->confuse = false;
+                        ball->velocity = INITIAL_BALL_VELOCITY;
                     }
                 }
                 else if (powerUp.type == "chaos")
@@ -427,6 +430,7 @@ void Game::updatePowerUps(float dt)
                     {	// only reset if no other PowerUp of type chaos is active
                         effects->chaos = false;
                     }
+                    ball->velocity = INITIAL_BALL_VELOCITY;
                 }
             }
         }
@@ -471,11 +475,11 @@ void Game::activatePowerUp(PowerUp& powerUp)
     else if (powerUp.type == "confuse")
     {
         if (!effects->chaos) { effects->confuse = true; } // only activate if chaos wasn't already active 
-            
+        ball->velocity *= 0.5;
     }
     else if (powerUp.type == "chaos")
     {
         if (!effects->confuse) { effects->chaos = true; }
-            
+        ball->velocity *= 0.5;
     }
 }
