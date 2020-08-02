@@ -188,9 +188,8 @@ void Game::doCollisionsExist()
         if (!box.destroyed)
         {
             Collision collision = checkCollision(*ball, box);
-            if (collision.isCollision) // if collision is true
+            if (collision.isCollision) 
             {
-                // destroy block if not solid
                 if (!box.isSolid) 
                 { 
                     box.destroyed = true; 
@@ -229,6 +228,7 @@ void Game::doCollisionsExist()
             }
         }
 
+        // replace with for(const auto& powerUp : powerupManager->powerUps)?
         for (PowerUp& powerUp : this->powerUps)
         {
             if (!powerUp.destroyed)
@@ -264,13 +264,10 @@ void Game::doCollisionsExist()
 
 bool Game::checkCollision(GameObject& one, GameObject& two) const // AABB - AABB collision
 {
-    // collision x-axis?
-    bool collisionX = one.position.x + one.size.x >= two.position.x &&
-        two.position.x + two.size.x >= one.position.x;
-    // collision y-axis?
-    bool collisionY = one.position.y + one.size.y >= two.position.y &&
-        two.position.y + two.size.y >= one.position.y;
-    // collision only if on both axes
+    
+    bool collisionX = one.position.x + one.size.x >= two.position.x && two.position.x + two.size.x >= one.position.x;
+    bool collisionY = one.position.y + one.size.y >= two.position.y && two.position.y + two.size.y >= one.position.y;
+  
     return collisionX && collisionY;
 }
 
@@ -372,7 +369,7 @@ void Game::spawnPowerUps(GameObject& block)
             PowerUp("pad-size-increase", glm::vec3(1.0f, 0.6f, 0.4), 0.0f, block.position, ResourceManager::getTexture("powerup_increase")
             ));
     }
-    if (ek::random_static::get<bool>(.066)) // negative powerups should spawn more often
+    if (ek::random_static::get<bool>(.066)) // negative powerups should spawn more often, 1 in 15
     {
         this->powerUps.push_back(
             PowerUp("confuse", glm::vec3(1.0f, 0.3f, 0.3f), 15.0f, block.position, ResourceManager::getTexture("powerup_confuse")
