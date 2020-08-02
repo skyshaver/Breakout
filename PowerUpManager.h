@@ -10,6 +10,7 @@ class PostProcessor;
 
 class PowerUpManager
 {
+public:
 	PowerUpManager();
 
 	void update(float dt, BallObject& ball, GameObject& player, PostProcessor& effects);

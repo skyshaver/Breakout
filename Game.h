@@ -38,7 +38,7 @@ class GameObject;
 class GameLevel;
 class ParticleGenerator;
 class PostProcessor;
-class PowerUp;
+class PowerUpManager;
 class SpriteRenderer;
 
 class Game
@@ -62,10 +62,7 @@ public:
     Collision checkCollision(BallObject& one, GameObject& two); 
     Direction vectorDirection(glm::vec2 target);
 
-    void spawnPowerUps(GameObject& block);
-    void updatePowerUps(float dt);
-    void activatePowerUp(PowerUp& powerUp);
-    bool isOtherPowerUpActive(std::vector<PowerUp>& powerUps, std::string type);
+
 
     // game state
     GameState state;
@@ -75,13 +72,14 @@ public:
     std::vector<GameLevel> levels;
     unsigned int level;
 
-    std::vector<PowerUp> powerUps;
+  
 
     std::unique_ptr<BallObject> ball;
     std::unique_ptr<GameObject> player;
     std::unique_ptr<SpriteRenderer> renderer;
     std::unique_ptr<ParticleGenerator> particles;
     std::unique_ptr<PostProcessor> effects;
+    std::unique_ptr<PowerUpManager> powerUpManager;
 
 private:
     glm::vec2 startPlayerPos;

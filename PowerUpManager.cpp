@@ -66,37 +66,37 @@ void PowerUpManager::update(float dt, BallObject& ball, GameObject& player, Post
 
 void PowerUpManager::spawnPowerUps(GameObject& block)
 {
-    if (ek::random_static::get<bool>(.013)) // 1 in 75 chance
+    if (ek::random_static::get<bool>(POWERUP_GOOD_CHANCE)) // 1 in 75 chance
     {
         this->powerUps.push_back(
             PowerUp("speed", glm::vec3(0.5f, 0.5f, 1.0f), 0.0f, block.position, ResourceManager::getTexture("powerup_speed")
             ));
     }
-    if (ek::random_static::get<bool>(.013))
+    if (ek::random_static::get<bool>(POWERUP_GOOD_CHANCE))
     {
         this->powerUps.push_back(
             PowerUp("sticky", glm::vec3(1.0f, 0.5f, 1.0f), 20.0f, block.position, ResourceManager::getTexture("powerup_sticky")
             ));
     }
-    if (ek::random_static::get<bool>(.013))
+    if (ek::random_static::get<bool>(POWERUP_GOOD_CHANCE))
     {
         this->powerUps.push_back(
             PowerUp("pass-through", glm::vec3(0.5f, 1.0f, 0.5f), 10.0f, block.position, ResourceManager::getTexture("powerup_passthrough")
             ));
     }
-    if (ek::random_static::get<bool>(.013))
+    if (ek::random_static::get<bool>(POWERUP_GOOD_CHANCE))
     {
         this->powerUps.push_back(
             PowerUp("pad-size-increase", glm::vec3(1.0f, 0.6f, 0.4), 0.0f, block.position, ResourceManager::getTexture("powerup_increase")
             ));
     }
-    if (ek::random_static::get<bool>(.066)) // negative powerups should spawn more often, 1 in 15
+    if (ek::random_static::get<bool>(POWERUP_BAD_CHANCE)) // negative powerups should spawn more often, 1 in 15
     {
         this->powerUps.push_back(
             PowerUp("confuse", glm::vec3(1.0f, 0.3f, 0.3f), 15.0f, block.position, ResourceManager::getTexture("powerup_confuse")
             ));
     }
-    if (ek::random_static::get<bool>(.066))
+    if (ek::random_static::get<bool>(POWERUP_BAD_CHANCE))
     {
         this->powerUps.push_back(
             PowerUp("chaos", glm::vec3(0.9f, 0.25f, 0.25f), 15.0f, block.position, ResourceManager::getTexture("powerup_chaos")
@@ -131,7 +131,7 @@ void PowerUpManager::activatePowerUps(PowerUp& powerUp, BallObject& ball, GameOb
     }
     else if (powerUp.type == "chaos")
     {
-        if (effects.confuse) { effects.chaos = true; }
+        if (!effects.confuse) { effects.chaos = true; }
         ball.velocity *= 0.5;
     }
 }
