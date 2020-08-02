@@ -61,7 +61,7 @@ void Game::init()
     this->levels.push_back(two);
     this->levels.push_back(three);
     this->levels.push_back(four);
-    this->level = 0;
+    this->level = ek::random_static::get(0, 3);
 
     renderer = std::make_unique<SpriteRenderer>(ResourceManager::getShader("sprite"));
 
@@ -69,7 +69,7 @@ void Game::init()
     particles = std::make_unique<ParticleGenerator>(
         ResourceManager::getShader("particle"),
         ResourceManager::getTexture("particle"),
-        INITIAL_PARTICLES
+        PARTICLES_INITIAL_COUNT
     );
 
     // post procesing
@@ -84,7 +84,7 @@ void Game::init()
 
     // ball
     startBallPos = startPlayerPos + glm::vec2(PLAYER_SIZE.x / 2.0f - BALL_RADIUS, -BALL_RADIUS * 2.0f);
-    ball = std::make_unique<BallObject>(startBallPos, BALL_RADIUS, INITIAL_BALL_VELOCITY, ResourceManager::getTexture("face"));
+    ball = std::make_unique<BallObject>(startBallPos, BALL_RADIUS, BALL_INITIAL_VELOCITY, ResourceManager::getTexture("face"));
 
     // powerUpManager
     powerUpManager = std::make_unique<PowerUpManager>();
@@ -121,8 +121,10 @@ void Game::update(float dt)
 {
     ball->move(dt, this->width);
     this->doCollisionsExist();
-    particles->update(dt, *ball, NEW_PARTICLES_PER_FRAME, glm::vec2(ball->radius / 2.0f));
+
+    particles->update(dt, *ball, PARTICLES_NEW_PER_FRAME, glm::vec2(ball->radius / 2.0f));
     powerUpManager->update(dt, *ball, *player, *effects);
+
     if (shaketime > 0.f)
     {
         shaketime -= dt;
@@ -131,8 +133,26 @@ void Game::update(float dt)
 
     if (ball->position.y >= this->height)
     {
-        this->resetPlayer();
+        if (playerLives > 0)
+        {
+            this->resetPlayer();
+            playerLives--;
+        }
+        else
+        {
+            this->resetLevel();
+        }
+    }
+    if (this->levels[this->level].isCompleted())
+    {
+        int newLevel = 0;
+        while (newLevel == this->level)
+        {
+            newLevel = ek::random_static::get(0, 3);
+        }
+        this->level = newLevel;
         this->resetLevel();
+        this->resetPlayer();
     }
 }
 
@@ -166,7 +186,7 @@ void Game::resetPlayer()
 
     ball->stuck = true;
     ball->position = startBallPos;
-    ball->velocity = INITIAL_BALL_VELOCITY;
+    ball->velocity = BALL_INITIAL_VELOCITY;
     
     effects->chaos = false;
     effects->confuse = false;
@@ -198,6 +218,7 @@ void Game::doCollisionsExist()
                 { 
                     box.destroyed = true; 
                     powerUpManager->spawnPowerUps(box);
+                    this->levels[this->level].brickCount--;
                 }
                 else
                 {
@@ -259,7 +280,7 @@ void Game::doCollisionsExist()
         // then move accordingly
         float strength = 2.0f;
         glm::vec2 oldVelocity = ball->velocity;
-        ball->velocity.x = INITIAL_BALL_VELOCITY.x * percentage * strength;
+        ball->velocity.x = BALL_INITIAL_VELOCITY.x * percentage * strength;
         ball->velocity.y = -1.0f * abs(ball->velocity.y);
         ball->velocity = glm::normalize(ball->velocity) * glm::length(oldVelocity);
         ball->stuck = ball->sticky;

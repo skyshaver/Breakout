@@ -41,11 +41,11 @@ void GameLevel::draw(SpriteRenderer& renderer)
 
 bool GameLevel::isCompleted()
 {
-    for (GameObject& tile : this->Bricks)
+    /*for (GameObject& tile : this->Bricks)
     {
         if (!tile.isSolid && !tile.destroyed) { return false; }
-    }
-    return true;
+    }*/
+    return this->brickCount <= 0;
 }
 
 void GameLevel::init(std::vector<std::vector<unsigned int>> tileData, unsigned int levelWidth, unsigned int levelHeight)
@@ -81,6 +81,7 @@ void GameLevel::init(std::vector<std::vector<unsigned int>> tileData, unsigned i
                 glm::vec2 pos(unit_width * x, unit_height * y);
                 glm::vec2 size(unit_width, unit_height);
                 this->Bricks.push_back(GameObject(pos, size, ResourceManager::getTexture("block"), color));
+                brickCount++;
             }
         }
     }

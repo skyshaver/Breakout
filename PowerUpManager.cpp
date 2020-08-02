@@ -45,7 +45,7 @@ void PowerUpManager::update(float dt, BallObject& ball, GameObject& player, Post
                     if (!isOtherPowerUpActive(this->powerUps, "confuse"))
                     {	// only reset if no other PowerUp of type confuse is active
                         effects.confuse = false;
-                        ball.velocity = INITIAL_BALL_VELOCITY;
+                        ball.velocity = BALL_INITIAL_VELOCITY;
                     }
                 }
                 else if (powerUp.type == "chaos")
@@ -54,7 +54,7 @@ void PowerUpManager::update(float dt, BallObject& ball, GameObject& player, Post
                     {	// only reset if no other PowerUp of type chaos is active
                         effects.chaos = false;
                     }
-                    ball.velocity = INITIAL_BALL_VELOCITY;
+                    ball.velocity = BALL_INITIAL_VELOCITY;
                 }
             }
         }

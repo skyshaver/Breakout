@@ -85,5 +85,6 @@ private:
     glm::vec2 startPlayerPos;
     glm::vec2 startBallPos;
     float shaketime = 0.f;
+    unsigned int playerLives = PLAYER_INITIAL_LIVES;
 };
 
