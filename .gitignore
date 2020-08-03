@@ -338,3 +338,12 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+# soundfiles
+samples/
+
+#fmod dlls
+fmod.dll
+fmodL.dll
+fmodstudio.dll
+fmodstudioL.dll
