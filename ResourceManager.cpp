@@ -9,8 +9,8 @@
 
 
 // Instantiate static variables
-std::map<std::string, Texture2D> ResourceManager::Textures;
-std::map<std::string, Shader> ResourceManager::Shaders;
+std::unordered_map<std::string, Texture2D> ResourceManager::Textures;
+std::unordered_map<std::string, Shader> ResourceManager::Shaders;
 
 Shader ResourceManager::loadShader(const char* vShaderFile, const char* fShaderFile, const char* gShaderFile, std::string name)
 {

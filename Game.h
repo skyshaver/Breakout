@@ -62,8 +62,6 @@ public:
     Collision checkCollision(BallObject& one, GameObject& two); 
     Direction vectorDirection(glm::vec2 target);
 
-
-
     // game state
     GameState state;
     std::array<bool, 1024> keys; // used to pass key state between game object and glfw
@@ -71,8 +69,6 @@ public:
 
     std::vector<GameLevel> levels;
     unsigned int level;
-
-  
 
     std::unique_ptr<BallObject> ball;
     std::unique_ptr<GameObject> player;
@@ -82,8 +78,8 @@ public:
     std::unique_ptr<PowerUpManager> powerUpManager;
 
 private:
-    glm::vec2 startPlayerPos;
-    glm::vec2 startBallPos;
+    glm::vec2 startPlayerPos{0.f};
+    glm::vec2 startBallPos{0.f};
     float shaketime = 0.f;
     unsigned int playerLives = PLAYER_INITIAL_LIVES;
 };

@@ -9,15 +9,11 @@
 #include <iostream>
 
 
-
-
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
-
-const unsigned int SCREEN_WIDTH = 800;
-
-const unsigned int SCREEN_HEIGHT = 600;
+constexpr unsigned int SCREEN_WIDTH = 800;
+constexpr unsigned int SCREEN_HEIGHT = 600;
 
 Game Breakout(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -71,13 +67,9 @@ int main(int argc, char* argv[])
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         glfwPollEvents();
-
-        // manage user input
-        // -----------------
+        
         Breakout.processInput(deltaTime);
-
-        // update game state
-        // -----------------
+        
         Breakout.update(deltaTime);
 
         // render
@@ -89,8 +81,6 @@ int main(int argc, char* argv[])
         glfwSwapBuffers(window);
     }
 
-    // delete all resources as loaded using the resource manager
-    // ---------------------------------------------------------
     ResourceManager::clear();
 
     glfwTerminate();
@@ -106,9 +96,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key >= 0 && key < 1024)
     {
         if (action == GLFW_PRESS)
+        {
             Breakout.keys[key] = true;
+        }
         else if (action == GLFW_RELEASE)
+        {
             Breakout.keys[key] = false;
+        }
     }
 }
 
