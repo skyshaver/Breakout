@@ -33,6 +33,7 @@ struct Collision
     glm::vec2 diffVec;
 };
 
+class AudioEngine;
 class BallObject;
 class GameObject;
 class GameLevel;
@@ -70,6 +71,7 @@ public:
     std::vector<GameLevel> levels;
     unsigned int level;
 
+    std::unique_ptr<AudioEngine> audioEngine;
     std::unique_ptr<BallObject> ball;
     std::unique_ptr<GameObject> player;
     std::unique_ptr<SpriteRenderer> renderer;

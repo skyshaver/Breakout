@@ -1,3 +1,4 @@
+#include "AudioEngine.h"
 #include "Game.h"
 #include "GameLevel.h"
 #include "ResourceManager.h"
@@ -21,6 +22,10 @@ Game::~Game()
 
 void Game::init()
 {
+    // audio init
+    audioEngine = std::make_unique<AudioEngine>();
+    audioEngine->init();
+
     // load shaders
     ResourceManager::loadShader("shaders/sprite.vert", "shaders/sprite.frag", nullptr, "sprite");
     ResourceManager::loadShader("shaders/particle.vert", "shaders/particle.frag", nullptr, "particle");
@@ -48,6 +53,13 @@ void Game::init()
     ResourceManager::loadTexture("textures/powerup_chaos.png", true, "powerup_chaos");
     ResourceManager::loadTexture("textures/powerup_passthrough.png", true, "powerup_passthrough");
     
+    //load sounds
+    audioEngine->loadSound("samples/Breakout_Theme.wav", false, true);
+    audioEngine->loadSound("samples/boop_13.wav");
+    audioEngine->loadSound("samples/beep_06.wav");
+
+
+
     // load levels
     GameLevel one;
     one.load("levels/one.lvl", this->width, this->height / 2);
@@ -62,6 +74,8 @@ void Game::init()
     this->levels.push_back(three);
     this->levels.push_back(four);
     this->level = ek::random_static::get(0, 3);
+
+    
 
     renderer = std::make_unique<SpriteRenderer>(ResourceManager::getShader("sprite"));
 
@@ -116,9 +130,14 @@ void Game::processInput(float dt)
         if (this->keys[GLFW_KEY_SPACE]) { ball->stuck = false; }
     }
 }
-
+bool firstPlay = true;
 void Game::update(float dt)
 {
+    if(firstPlay)
+    {
+        audioEngine->playSound("samples/Breakout_Theme.wav", audioEngine->volumeTodB(.15f));
+        firstPlay = false;
+    }
     ball->move(dt, this->width);
     this->doCollisionsExist();
 
@@ -219,6 +238,7 @@ void Game::doCollisionsExist()
                     box.destroyed = true; 
                     powerUpManager->spawnPowerUps(box);
                     this->levels[this->level].brickCount--;
+                    audioEngine->playSound("samples/boop_13.wav", audioEngine->volumeTodB(1.f));
                 }
                 else
                 {
@@ -253,7 +273,7 @@ void Game::doCollisionsExist()
             }
         }
 
-        // replace with for(const auto& powerUp : powerupManager->powerUps)?
+
         for (PowerUp& powerUp : powerUpManager->powerUps)
         {
             if (!powerUp.destroyed)
@@ -273,6 +293,7 @@ void Game::doCollisionsExist()
     Collision result = checkCollision(*ball, *player);
     if (!ball->stuck && result.isCollision)
     {
+        audioEngine->playSound("samples/beep_06.wav", audioEngine->volumeTodB(1.f));
         // check where it hit the board, and change velocity based on where it hit the board
         float centerBoard = player->position.x + player->size.x / 2.0f;
         float distance = (ball->position.x + ball->radius) - centerBoard;
