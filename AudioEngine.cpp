@@ -59,7 +59,7 @@ int AudioEngine::errorCheck(FMOD_RESULT result)
 
 void AudioEngine::loadBank(const std::string& bankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags)
 {
-    if (auto it = implementation->banks.find(bankName); it != implementation->banks.end())
+    if (implementation->banks.find(bankName) != implementation->banks.end())
     {
         return;
     }
@@ -73,7 +73,7 @@ void AudioEngine::loadBank(const std::string& bankName, FMOD_STUDIO_LOAD_BANK_FL
 
 void AudioEngine::loadEvent(const std::string& eventName)
 {
-    if (auto it = implementation->events.find(eventName); it != implementation->events.end())
+    if (implementation->events.find(eventName) != implementation->events.end())
     {
         return;
     }
@@ -93,8 +93,8 @@ void AudioEngine::loadEvent(const std::string& eventName)
 
 void AudioEngine::loadSound(const std::string& soundName, bool is3D, bool isLooping, bool isStream)
 {
-    //auto tFoundIt = implementation->sounds.find(strSoundName);
-    if (auto it = implementation->sounds.find(soundName); it != implementation->sounds.end())
+    
+    if (implementation->sounds.find(soundName) != implementation->sounds.end())
     {
         return;
     }
