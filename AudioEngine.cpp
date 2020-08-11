@@ -175,7 +175,9 @@ void AudioEngine::stopEvent(const std::string& eventName, bool isImmediate)
 {
     auto it = implementation->events.find(eventName);
     if (it == implementation->events.end())
+    {
         return;
+    }
 
     FMOD_STUDIO_STOP_MODE eMode;
     eMode = isImmediate ? FMOD_STUDIO_STOP_IMMEDIATE : FMOD_STUDIO_STOP_ALLOWFADEOUT;
@@ -239,7 +241,7 @@ bool AudioEngine::isEventPlaying(const std::string& eventName) const
         return false;
     }
 
-    FMOD_STUDIO_PLAYBACK_STATE* state = NULL;
+    FMOD_STUDIO_PLAYBACK_STATE* state = 0;
     if (it->second->getPlaybackState(state) == FMOD_STUDIO_PLAYBACK_PLAYING)
     {
         return true;

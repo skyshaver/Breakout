@@ -8,12 +8,8 @@
 
 #include <iostream>
 
-
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
-
-constexpr unsigned int SCREEN_WIDTH = 800;
-constexpr unsigned int SCREEN_HEIGHT = 600;
 
 Game Breakout(SCREEN_WIDTH, SCREEN_HEIGHT);
 

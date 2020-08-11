@@ -80,8 +80,6 @@ public:
     std::unique_ptr<PowerUpManager> powerUpManager;
 
 private:
-    glm::vec2 startPlayerPos{0.f};
-    glm::vec2 startBallPos{0.f};
     float shaketime = 0.f;
     unsigned int playerLives = PLAYER_INITIAL_LIVES;
 };

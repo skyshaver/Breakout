@@ -75,8 +75,6 @@ void Game::init()
     this->levels.push_back(four);
     this->level = ek::random_static::get(0, 3);
 
-    
-
     renderer = std::make_unique<SpriteRenderer>(ResourceManager::getShader("sprite"));
 
     // particle gen
@@ -90,15 +88,10 @@ void Game::init()
     effects = std::make_unique<PostProcessor>(ResourceManager::getShader("postprocessing"), this->width, this->height);
 
     // player paddle
-    startPlayerPos = glm::vec2(
-        this->width / 2.0f - PLAYER_SIZE.x / 2.0f,
-        this->height - PLAYER_SIZE.y
-    );
-    player = std::make_unique<GameObject>(startPlayerPos, PLAYER_SIZE, ResourceManager::getTexture("paddle"));
+    player = std::make_unique<GameObject>(PLAYER_START_POSITION, PLAYER_SIZE, ResourceManager::getTexture("paddle"));
 
     // ball
-    startBallPos = startPlayerPos + glm::vec2(PLAYER_SIZE.x / 2.0f - BALL_RADIUS, -BALL_RADIUS * 2.0f);
-    ball = std::make_unique<BallObject>(startBallPos, BALL_RADIUS, BALL_INITIAL_VELOCITY, ResourceManager::getTexture("face"));
+    ball = std::make_unique<BallObject>(BALL_START_POSITION, BALL_RADIUS, BALL_INITIAL_VELOCITY, ResourceManager::getTexture("face"));
 
     // powerUpManager
     powerUpManager = std::make_unique<PowerUpManager>();
@@ -201,10 +194,10 @@ void Game::render()
 void Game::resetPlayer()
 {
     player->size = PLAYER_SIZE;
-    player->position = startPlayerPos;
+    player->position = PLAYER_START_POSITION;
 
     ball->stuck = true;
-    ball->position = startBallPos;
+    ball->position = BALL_START_POSITION;
     ball->velocity = BALL_INITIAL_VELOCITY;
     
     effects->chaos = false;
