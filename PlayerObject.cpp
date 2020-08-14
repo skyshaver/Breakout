@@ -1,7 +1,7 @@
 #include "PlayerObject.h"
 #include "GlobalConstants.h"
 
-void PlayerObject::moveRight(float dt)
+void PlayerObject::moveLeft(float dt)
 {
     float velocity = PLAYER_VELOCITY * dt;
     if (this->position.x >= 0.0f)
@@ -11,7 +11,7 @@ void PlayerObject::moveRight(float dt)
     }
 }
 
-void PlayerObject::moveLeft(float dt)
+void PlayerObject::moveRight(float dt)
 {
     float velocity = PLAYER_VELOCITY * dt;
     if (this->position.x <= SCREEN_WIDTH - this->size.x)

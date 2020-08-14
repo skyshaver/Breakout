@@ -1,10 +1,12 @@
 #include "AudioEngine.h"
+#include "Command.h"
 #include "Game.h"
 #include "GameLevel.h"
 #include "ResourceManager.h"
 #include "SpriteRenderer.h"
 #include "BallObject.h"
 #include "ParticleGenerator.h"
+#include "PlayerObject.h"
 #include "PostProcessor.h"
 #include "PowerUpManager.h"
 #include "PowerUp.h"
@@ -84,7 +86,7 @@ void Game::init()
     );
     effects = std::make_unique<PostProcessor>(ResourceManager::getShader("postprocessing"), this->width, this->height);
 
-    player = std::make_unique<GameObject>(PLAYER_START_POSITION, PLAYER_SIZE, ResourceManager::getTexture("paddle"));    
+    player = std::make_unique<PlayerObject>(PLAYER_START_POSITION, PLAYER_SIZE, ResourceManager::getTexture("paddle"));    
 
 
     ball = std::make_unique<BallObject>(BALL_START_POSITION, BALL_RADIUS, BALL_INITIAL_VELOCITY, ResourceManager::getTexture("face"));
@@ -102,7 +104,8 @@ void Game::processInput(float dt)
         {
             if (player->position.x >= 0.0f) 
             { 
-                player->position.x -= velocity; 
+                // player->position.x -= velocity; 
+                player->moveLeft(dt);               
                 if (ball->stuck) { ball->position.x -= velocity; }
             }
         }
@@ -110,7 +113,8 @@ void Game::processInput(float dt)
         {
             if (player->position.x <= this->width - player->size.x) 
             { 
-                player->position.x += velocity; 
+                // player->position.x += velocity; 
+                player->moveRight(dt);
                 if (ball->stuck) { ball->position.x += velocity; }
             }
         }
@@ -378,5 +382,6 @@ Direction Game::vectorDirection(glm::vec2 target)
     }
     return (Direction)best_match;
 }
+
 
 

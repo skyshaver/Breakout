@@ -38,6 +38,7 @@ class BallObject;
 class GameObject;
 class GameLevel;
 class ParticleGenerator;
+class PlayerObject;
 class PostProcessor;
 class PowerUpManager;
 class SpriteRenderer;
@@ -73,7 +74,7 @@ public:
 
     std::unique_ptr<AudioEngine> audioEngine;
     std::unique_ptr<BallObject> ball;
-    std::unique_ptr<GameObject> player;
+    std::unique_ptr<PlayerObject> player;
     std::unique_ptr<SpriteRenderer> renderer;
     std::unique_ptr<ParticleGenerator> particles;
     std::unique_ptr<PostProcessor> effects;
@@ -82,5 +83,6 @@ public:
 private:
     float shaketime = 0.f;
     unsigned int playerLives = PLAYER_INITIAL_LIVES;
+
 };
 
