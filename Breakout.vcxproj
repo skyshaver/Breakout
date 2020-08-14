@@ -157,11 +157,13 @@
   <ItemGroup>
     <ClCompile Include="AudioEngine.cpp" />
     <ClCompile Include="BallObject.cpp" />
+    <ClCompile Include="Command.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameLevel.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ParticleGenerator.cpp" />
+    <ClCompile Include="PlayerObject.cpp" />
     <ClCompile Include="PostProcessor.cpp" />
     <ClCompile Include="PowerUpManager.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
@@ -173,11 +175,13 @@
   <ItemGroup>
     <ClInclude Include="AudioEngine.h" />
     <ClInclude Include="BallObject.h" />
+    <ClInclude Include="Command.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameLevel.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GlobalConstants.h" />
     <ClInclude Include="ParticleGenerator.h" />
+    <ClInclude Include="PlayerObject.h" />
     <ClInclude Include="PostProcessor.h" />
     <ClInclude Include="PowerUp.h" />
     <ClInclude Include="PowerUpManager.h" />

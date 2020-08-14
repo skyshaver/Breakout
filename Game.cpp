@@ -2,7 +2,7 @@
 #include "Game.h"
 #include "GameLevel.h"
 #include "ResourceManager.h"
-#include "Spriterenderer.h"
+#include "SpriteRenderer.h"
 #include "BallObject.h"
 #include "ParticleGenerator.h"
 #include "PostProcessor.h"
@@ -73,27 +73,21 @@ void Game::init()
     this->levels.push_back(two);
     this->levels.push_back(three);
     this->levels.push_back(four);
-    this->level = ek::random_static::get(0, 3);
+    this->level = ek::random_static::get(0, 3); // start on a random level for testing
 
+    // init game objects
     renderer = std::make_unique<SpriteRenderer>(ResourceManager::getShader("sprite"));
-
-    // particle gen
     particles = std::make_unique<ParticleGenerator>(
         ResourceManager::getShader("particle"),
         ResourceManager::getTexture("particle"),
         PARTICLES_INITIAL_COUNT
     );
-
-    // post procesing
     effects = std::make_unique<PostProcessor>(ResourceManager::getShader("postprocessing"), this->width, this->height);
 
-    // player paddle
-    player = std::make_unique<GameObject>(PLAYER_START_POSITION, PLAYER_SIZE, ResourceManager::getTexture("paddle"));
+    player = std::make_unique<GameObject>(PLAYER_START_POSITION, PLAYER_SIZE, ResourceManager::getTexture("paddle"));    
 
-    // ball
+
     ball = std::make_unique<BallObject>(BALL_START_POSITION, BALL_RADIUS, BALL_INITIAL_VELOCITY, ResourceManager::getTexture("face"));
-
-    // powerUpManager
     powerUpManager = std::make_unique<PowerUpManager>();
     
 }
@@ -103,7 +97,7 @@ void Game::processInput(float dt)
     if (this->state == GameState::GAME_ACTIVE)
     {
         float velocity = PLAYER_VELOCITY * dt;
-        // move playerboard
+        // move player
         if (this->keys[GLFW_KEY_A])
         {
             if (player->position.x >= 0.0f) 
@@ -123,14 +117,17 @@ void Game::processInput(float dt)
         if (this->keys[GLFW_KEY_SPACE]) { ball->stuck = false; }
     }
 }
+
 bool firstPlay = true;
 void Game::update(float dt)
 {
+    // std::cout << ball->position.y << '\n';
     if(firstPlay)
     {
         audioEngine->playSound("samples/Breakout_Theme.wav", audioEngine->volumeTodB(.15f));
         firstPlay = false;
     }
+
     ball->move(dt, this->width);
     this->doCollisionsExist();
 
@@ -143,7 +140,7 @@ void Game::update(float dt)
         if (shaketime <= 0.f) { effects->shake = false; }
     }
 
-    if (ball->position.y >= this->height)
+    if (ball->position.y >= BALL_DEATH_LINE) //
     {
         if (playerLives > 0)
         {
