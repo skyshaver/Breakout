@@ -48,7 +48,8 @@ public:
 
     void loadBank(const std::string& bankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags);
     void loadEvent(const std::string& eventName);
-    void loadSound(const std::string& soundName, bool is3D = false, bool isLooping = false, bool isStream = false);
+    void loadSound(const std::string& soundPath, FMOD_MODE mode = FMOD_DEFAULT | FMOD_2D | FMOD_LOOP_OFF);
+    void loadSound(const std::string& soundPath, const std::string& soundName, FMOD_MODE mode = FMOD_DEFAULT | FMOD_2D | FMOD_LOOP_OFF);
     void unLoadSound(const std::string& strSoundName);
 
     // void set3dListenerAndOrientation(const Vector3& vPos = Vector3{ 0, 0, 0 }, float fVolumedB = 0.0f);

@@ -19,7 +19,9 @@ public:
     virtual void draw(SpriteRenderer& renderer);
 
     // object state
-    glm::vec2   position, size, velocity;
+    glm::vec2   position;
+    glm::vec2   size;
+    glm::vec2   velocity;
     glm::vec3   color;
     float       rotation;
     bool        isSolid;

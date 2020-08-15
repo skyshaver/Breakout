@@ -1,13 +1,31 @@
 #include "PlayerObject.h"
 #include "GlobalConstants.h"
 
-void PlayerObject::moveLeft(float dt)
+
+// dir vector
+// 1, 0 right
+// -1 , 0 left
+// 0, 1 up
+// 0, -1 down
+void PlayerObject::move(float dt, glm::vec2 dir)
 {
     float velocity = PLAYER_VELOCITY * dt;
-    if (this->position.x >= 0.0f)
+    if (dir.x > 0)
     {
-        this->position.x -= velocity;
-        //if (ball->stuck) { ball->position.x -= velocity; }
+        if (this->position.x <= SCREEN_WIDTH - this->size.x)
+        {
+            this->position.x += velocity;
+            //if (ball->stuck) { ball->position.x += velocity; }
+        }
+    }
+    else
+    {
+
+        if (this->position.x >= 0.0f)
+        {
+            this->position.x -= velocity;
+            //if (ball->stuck) { ball->position.x -= velocity; }
+        }
     }
 }
 
@@ -18,5 +36,15 @@ void PlayerObject::moveRight(float dt)
     {
         this->position.x += velocity;
         //if (ball->stuck) { ball->position.x += velocity; }
+    }
+}
+
+void PlayerObject::moveLeft(float dt)
+{
+    float velocity = PLAYER_VELOCITY * dt;
+    if (this->position.x >= 0.0f)
+    {
+        this->position.x -= velocity;
+        //if (ball->stuck) { ball->position.x -= velocity; }
     }
 }

@@ -91,26 +91,47 @@ void AudioEngine::loadEvent(const std::string& eventName)
     }
 }
 
-void AudioEngine::loadSound(const std::string& soundName, bool is3D, bool isLooping, bool isStream)
+void AudioEngine::loadSound(const std::string& soundPath, FMOD_MODE mode)
 {
     
-    if (implementation->sounds.find(soundName) != implementation->sounds.end())
+    if (implementation->sounds.find(soundPath) != implementation->sounds.end())
     {
         return;
     }
 
+    /*FMOD_MODE mode = FMOD_DEFAULT;
+    mode |= is3D ? FMOD_3D : FMOD_2D;
+    mode |= isLooping ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF;
+    mode |= isStream ? FMOD_CREATESTREAM : FMOD_CREATECOMPRESSEDSAMPLE;*/
+
+    FMOD::Sound* sound = nullptr;
+    AudioEngine::errorCheck(implementation->system->createSound(soundPath.c_str(), mode, nullptr, &sound));
+    if (sound)
+    {
+        implementation->sounds[soundPath] = sound;
+    }
+
+}
+
+void AudioEngine::loadSound(const std::string& soundPath, const std::string& soundName, FMOD_MODE mode)
+{
+    if (implementation->sounds.find(soundName) != implementation->sounds.end())
+    {
+       
+        return;
+    }
+    /*std::cout << "oops" << '\n';
     FMOD_MODE mode = FMOD_DEFAULT;
     mode |= is3D ? FMOD_3D : FMOD_2D;
     mode |= isLooping ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF;
-    mode |= isStream ? FMOD_CREATESTREAM : FMOD_CREATECOMPRESSEDSAMPLE;
+    mode |= isStream ? FMOD_CREATESTREAM : FMOD_CREATECOMPRESSEDSAMPLE;*/
 
     FMOD::Sound* sound = nullptr;
-    AudioEngine::errorCheck(implementation->system->createSound(soundName.c_str(), mode, nullptr, &sound));
+    AudioEngine::errorCheck(implementation->system->createSound(soundPath.c_str(), mode, nullptr, &sound));
     if (sound)
     {
         implementation->sounds[soundName] = sound;
     }
-
 }
 
 void AudioEngine::unLoadSound(const std::string& strSoundName)

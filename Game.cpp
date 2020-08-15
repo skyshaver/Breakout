@@ -56,11 +56,11 @@ void Game::init()
     ResourceManager::loadTexture("textures/powerup_passthrough.png", true, "powerup_passthrough");
     
     //load sounds
-    audioEngine->loadSound("samples/Breakout_Theme.wav", false, true);
-    audioEngine->loadSound("samples/boop_13.wav");
-    audioEngine->loadSound("samples/beep_06.wav");
-    audioEngine->loadSound("samples/block_shake_01.wav");
-    audioEngine->loadSound("samples/block_shake_02.wav");
+    audioEngine->loadSound("samples/Breakout_Theme.wav", "theme", FMOD_DEFAULT | FMOD_2D | FMOD_LOOP_NORMAL);
+    audioEngine->loadSound("samples/boop_13.wav", "boop");
+    audioEngine->loadSound("samples/beep_06.wav", "beep");
+    audioEngine->loadSound("samples/block_shake_01.wav", "block_shake_01");
+    audioEngine->loadSound("samples/block_shake_02.wav", "block_shake_02");
 
 
 
@@ -105,18 +105,16 @@ void Game::processInput(float dt)
         if (this->keys[GLFW_KEY_A])
         {
             if (player->position.x >= 0.0f) 
-            { 
-                // player->position.x -= velocity; 
-                player->moveLeft(dt);               
+            {                  
+                player->move(dt, glm::vec2{ -1, 0 });
                 if (ball->stuck) { ball->position.x -= velocity; }
             }
         }
         if (this->keys[GLFW_KEY_D])
         {
             if (player->position.x <= this->width - player->size.x) 
-            { 
-                // player->position.x += velocity; 
-                player->moveRight(dt);
+            {                 
+                player->move(dt, glm::vec2{ 1, 0 });                
                 if (ball->stuck) { ball->position.x += velocity; }
             }
         }
@@ -130,7 +128,7 @@ void Game::update(float dt)
     audioEngine->update();
     if(firstPlay)
     {
-        audioEngine->playSound("samples/Breakout_Theme.wav", audioEngine->volumeTodB(.15f));
+        audioEngine->playSound("theme", audioEngine->volumeTodB(.15f));
         firstPlay = false;
     }
 
@@ -234,14 +232,14 @@ void Game::doCollisionsExist()
                     box.destroyed = true; 
                     powerUpManager->spawnPowerUps(box);
                     this->levels[this->level].brickCount--;
-                    audioEngine->playSound("samples/boop_13.wav", audioEngine->volumeTodB(1.f));
+                    audioEngine->playSound("boop", audioEngine->volumeTodB(1.f));
                 }
                 else
                 {
                     shaketime = 0.08f;
                     // shaketime = static_cast<float>(audioEngine->getSoundLengthInMS("samples/block_shake_02.wav" )) / 1000.f;
                     effects->shake = true;
-                    audioEngine->playSound("samples/block_shake_02.wav", audioEngine->volumeTodB(0.4f));
+                    audioEngine->playSound("block_shake_02", audioEngine->volumeTodB(0.4f));
                 }
 
                 // collision resolution
@@ -291,7 +289,7 @@ void Game::doCollisionsExist()
     Collision result = checkCollision(*ball, *player);
     if (!ball->stuck && result.isCollision)
     {
-        audioEngine->playSound("samples/beep_06.wav", audioEngine->volumeTodB(1.f));
+        audioEngine->playSound("beep", audioEngine->volumeTodB(1.f));
         // check where it hit the board, and change velocity based on where it hit the board
         float centerBoard = player->position.x + player->size.x / 2.0f;
         float distance = (ball->position.x + ball->radius) - centerBoard;
