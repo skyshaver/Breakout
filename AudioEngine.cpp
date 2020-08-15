@@ -138,8 +138,10 @@ int AudioEngine::playSound(const std::string& soundName, float volumedB, const g
             return channelId;
         }
     }
-    FMOD::Channel* channel = 0;
+    
+    FMOD::Channel* channel = nullptr;
     AudioEngine::errorCheck(implementation->system->playSound(it->second, nullptr, true, &channel));
+
     if (channel)
     {
         FMOD_MODE currMode;
@@ -153,6 +155,18 @@ int AudioEngine::playSound(const std::string& soundName, float volumedB, const g
         AudioEngine::errorCheck(channel->setPaused(false));
         implementation->channels[channelId] = channel;
     }
+
+    // debugging
+    /*static int soundsPlayed = 0;
+    soundsPlayed++;
+    if (soundsPlayed > 5)
+    {
+        for (const auto& [key, value] : implementation->channels)
+        {
+            std::cout << "key: " << key << " value: " << value << '\n';
+        }
+    }*/
+
     return channelId;
 }
 

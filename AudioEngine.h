@@ -24,6 +24,7 @@ struct Implementation
     FMOD::System* system;
 
     int nextChannelId = 0;
+    
 
     using SoundMap = std::unordered_map<std::string, FMOD::Sound*>;
     using ChannelMap = std::unordered_map<int, FMOD::Channel*>;
@@ -71,6 +72,8 @@ public:
     FMOD_VECTOR vectorToFmod(const glm::vec3& pos);
 
     //static std::unique_ptr<Implementation> implementation;
+
+   
 
 };
 

@@ -127,7 +127,7 @@ void Game::processInput(float dt)
 bool firstPlay = true;
 void Game::update(float dt)
 {
-    // std::cout << ball->position.y << '\n';
+    audioEngine->update();
     if(firstPlay)
     {
         audioEngine->playSound("samples/Breakout_Theme.wav", audioEngine->volumeTodB(.15f));
@@ -154,7 +154,7 @@ void Game::update(float dt)
             playerLives--;
         }
         else
-        {
+        {            
             this->resetLevel();
         }
     }
@@ -167,7 +167,6 @@ void Game::update(float dt)
         }
         this->level = newLevel;
         this->resetLevel();
-        this->resetPlayer();
     }
 }
 
@@ -213,6 +212,7 @@ void Game::resetPlayer()
 
 void Game::resetLevel()
 {
+    this->resetPlayer();
     if (this->level == 0) { this->levels[0].load("levels/one.lvl", this->width, this->height / 2); }
     else if (this->level == 1) { this->levels[1].load("levels/two.lvl", this->width, this->height / 2); }
     else if (this->level == 2) { this->levels[2].load("levels/three.lvl", this->width, this->height / 2); }
