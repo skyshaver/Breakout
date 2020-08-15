@@ -59,6 +59,8 @@ void Game::init()
     audioEngine->loadSound("samples/Breakout_Theme.wav", false, true);
     audioEngine->loadSound("samples/boop_13.wav");
     audioEngine->loadSound("samples/beep_06.wav");
+    audioEngine->loadSound("samples/block_shake_01.wav");
+    audioEngine->loadSound("samples/block_shake_02.wav");
 
 
 
@@ -237,7 +239,9 @@ void Game::doCollisionsExist()
                 else
                 {
                     shaketime = 0.08f;
+                    // shaketime = static_cast<float>(audioEngine->getSoundLengthInMS("samples/block_shake_02.wav" )) / 1000.f;
                     effects->shake = true;
+                    audioEngine->playSound("samples/block_shake_02.wav", audioEngine->volumeTodB(0.4f));
                 }
 
                 // collision resolution
